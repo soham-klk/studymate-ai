@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMate AI - Smart Study Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate3d(0,0,0)' },
+                            '50%': { transform: 'translate3d(0,-20px,0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+       body{
+    background: linear-gradient(135deg, #fff,#076585);
+
+       }
+   
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg,#bf5ae0,#a811da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+           
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dark-glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(31, 41, 55, 0.75);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner { 
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { 
+            backface-visibility: hidden; 
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-card-back { transform: rotateY(180deg); }
+        .page-enter { animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .page-leave { animation: slideOut 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-30px); } }
+        .typing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4f46e5;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+        #logo{
+            height: 280px;
+            width: 280px;
+            border-radius: 25px;
+       box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        }
+        .buttons{
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border: none;
+    padding: 5px; 
+    width: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+    transition: all 0.3s ease;
+
+        }
+        #ai{
+             background-color: azure;
+    border: 10px solid white;
+    border-radius: 12px;
+    
+    width: 200px;
+    height: 70px;
+
+    display: flex;
+    justify-content: center;   
+    align-items: center;       
+    
+    font-size: 18px;
+    cursor: pointer;
+        }
+        #icon{
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    
+   
+    <main class="pt-20 pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+      
+        <section id="landing" class="min-h-screen flex flex-col justify-center pb-32 page-enter">
+            <div class="text-center max-w-5xl mx-auto">
+                <div class="inline-block animate-float mb-8">
+                    
+                        <img src="/logo.jpeg" alt="Logo" id="logo">
+                    
+                </div>
+                <h1 class="text-6xl md:text-8xl lg:text-9xl font-black gradient-text mb-12 leading-tight tracking-tight drop-shadow-2xl">
+                    StudyMate AI
+                </h1>
+                <p class="text-xl md:text-2xl lg:text-3xl text-gray-700 dark:text-gray-300 mb-16 max-w-3xl mx-auto leading-relaxed opacity-90">
+                    Transform your notes into <strong class="text-indigo-600 font-semibold">smart summaries</strong>, 
+                    <strong class="text-purple-600 font-semibold">practice quizzes</strong>, 
+                    <strong class="text-emerald-600 font-semibold">flashcards</strong>, and chat with your <strong class="text-pink-600 font-semibold">AI tutor</strong>.
+                </p>
+                <div class="flex flex-col lg:flex-row gap-6 justify-center items-center mb-24">
+                    
+                    
+                    <a href="/tutor.html" id="ai"><button>
+                        💬 AI Tutor
+                    </button></a>
+                </div>
+            </div>
+
+            
+            <div id="box" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-32">
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('notes')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-blue-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                       <img src="/sum.webp" alt="summary" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-indigo-600 transition-all duration-300">Smart Summaries</h3>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Condense long notes into key points instantly</p>
+                   <a href="/summary.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Get summary</button>
+                    </a>
+                </div>
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('quiz')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/quiz.webp" alt="quiz" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-purple-600 transition-all duration-300">Quiz Generator</h3>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Auto-generated practice questions with instant scoring</p>
+                    <a href="/quiz.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Get Quiz</button>
+                    </a>
+                </div>
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('flashcards')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/flash.jpg" alt="flashcards" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-emerald-600 transition-all duration-300">Interactive Flashcards</h3>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Beautiful flip animations for perfect memorization</p>
+                    <a href="/flashcard.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Get flashcards</button>
+                    </a>
+                </div>
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('chat')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-rose-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                       <img src="/plan.webp" alt="flashcards" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-pink-600 transition-all duration-300">Study planner</h3>
+                    
+                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Ask questions about your notes and get instant help</p>
+                    <a href="/planner.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Create Plan</button>
+                    </a>
+            </div>
+            </div>
+            <div id="box" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-32">
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('notes')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-blue-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                       <img src="/careerimg.webp" alt="career" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-indigo-600 transition-all duration-300">Career guider</h3>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Discover suitable career paths based on your Education.</p>
+                   <a href="/career.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Know Careers</button>
+                    </a>
+                </div>
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('quiz')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/faqimg.webp" alt="faq" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-purple-600 transition-all duration-300">Frequently asked questions</h3>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Find clear answers to commonly asked questions about the platform.</p>
+                    <a href="/faq.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Read FAQ</button>
+                    </a>
+                </div>
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('flashcards')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/feed.webp" alt="flashcards" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-emerald-600 transition-all duration-300">Give Feedback</h3>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Share your thoughts and suggestions to help improve the website.</p>
+                    <a href="/responce.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Write Feedback</button>
+                    </a>
+                </div>
+                <div class="feature-card p-10 rounded-3xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-3xl hover:-translate-y-4 transition-all duration-500 cursor-pointer group backdrop-blur-xl" onclick="showPage('chat')">
+                    <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-rose-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 transition-all duration-300">
+                       <img src="/dev.png" alt="flashcards" id="icon">
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white mb-6 group-hover:text-pink-600 transition-all duration-300">Who Built This?</h3>
+                    
+                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Learn about the creator and the idea behind the project.</p>
+                    <a href="/project.html" class="block w-fit mx-auto mt-6">
+                        <button class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Know more</button>
+                    </a>
+            </div>
+            </div>
+        </section>
+
+           </main>
+
+   </body>
+   </html>

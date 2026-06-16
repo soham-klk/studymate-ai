@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - StudyMate AI - Smart Study Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #fff, #076585);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate3d(0,0,0)' },
+                            '50%': { transform: 'translate3d(0,-20px,0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #bf5ae0, #a811da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .faq-item {
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .faq-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .faq-question {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .faq-question:hover {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(168, 17, 218, 0.1));
+        }
+        .faq-answer {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(-10px);
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            opacity: 1;
+            padding: 1.5rem 0;
+            transform: translateY(0);
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+        .page-enter { animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        #logo {
+            height: 280px;
+            width: 280px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45);
+        }
+         #bn{
+            background: linear-gradient(45deg, #31fff5, #4b12b4);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+            
+        }
+    </style>
+</head>
+<body class="page-enter">
+    
+               <button id="bn" onclick="window.location.href='index.html'">Back</button>
+    
+
+    
+    <main class="pt-12 pb-28 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+        <section class="text-center mb-24 page-enter">
+            <div class="inline-block animate-float mb-12 mx-auto">
+                <img src="/logo.jpeg" alt="StudyMate AI Logo" id="logo">
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black gradient-text mb-8 leading-tight tracking-tight drop-shadow-2xl">
+                Frequently Asked
+            </h1>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-gray-800 mb-12 leading-tight">
+                Questions
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto leading-relaxed opacity-90">
+                Everything you need to know about <strong class="text-indigo-600 font-semibold">StudyMate AI</strong>
+            </p>
+        </section>
+
+    
+        <div class="space-y-6">
+           
+            <div class="faq-item bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-xl">
+                <div class="faq-question p-8 md:p-10 flex items-center justify-between hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50">
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-800 flex-1 pr-4">
+                        🤔 What is StudyMate AI?
+                    </h3>
+                    <div class="faq-icon w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="faq-answer px-8 md:px-10 text-lg text-gray-600 leading-relaxed">
+                    StudyMate AI is your ultimate study companion that transforms your notes into <strong>smart summaries</strong>, 
+                    <strong>practice quizzes</strong>, <strong>interactive flashcards</strong>, and provides an <strong>AI-powered study planner</strong>. 
+                    Simply upload your notes and let AI do the heavy lifting!
+                </div>
+            </div>
+
+         
+            <div class="faq-item bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-xl">
+                <div class="faq-question p-8 md:p-10 flex items-center justify-between hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50">
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-800 flex-1 pr-4">
+                        📝 How do I use the Smart Summary feature?
+                    </h3>
+                    <div class="faq-icon w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="faq-answer px-8 md:px-10 text-lg text-gray-600 leading-relaxed">
+                    1. Go to <strong>Summary</strong> page<br>
+                    2. Paste or upload your notes<br>
+                    3. Click "Generate Summary"<br>
+                    4. Get concise, key-point summaries instantly!<br><br>
+                    Perfect for quick revision and understanding core concepts.
+                </div>
+            </div>
+
+      
+            <div class="faq-item bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-xl">
+                <div class="faq-question p-8 md:p-10 flex items-center justify-between hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50">
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-800 flex-1 pr-4">
+                        🧠 What about Quiz Generator?
+                    </h3>
+                    <div class="faq-icon w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="faq-answer px-8 md:px-10 text-lg text-gray-600 leading-relaxed">
+                    Upload your notes → Generate practice questions → Test yourself → Get instant scoring and explanations. 
+                    Our AI creates <strong>MCQs, True/False, Fill-in-the-blanks</strong> tailored to your content for perfect exam prep!
+                </div>
+            </div>
+
+        
+            <div class="faq-item bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-xl">
+                <div class="faq-question p-8 md:p-10 flex items-center justify-between hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50">
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-800 flex-1 pr-4">
+                        🎴 How do Flashcards work?
+                    </h3>
+                    <div class="faq-icon w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="faq-answer px-8 md:px-10 text-lg text-gray-600 leading-relaxed">
+                    Our flashcards feature <strong>smooth flip animations</strong> with question on front and answer on back. 
+                    AI extracts key terms and concepts from your notes automatically. 
+                    <strong>Spaced repetition</strong> built-in for better retention!
+                </div>
+            </div>
+
+          
+            <div class="faq-item bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-xl">
+                <div class="faq-question p-8 md:p-10 flex items-center justify-between hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50">
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-800 flex-1 pr-4">
+                        💬 What is the AI Tutor?
+                    </h3>
+                    <div class="faq-icon w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="faq-answer px-8 md:px-10 text-lg text-gray-600 leading-relaxed">
+                    Chat with our AI tutor anytime! Ask questions about your notes, get explanations, 
+                    solve doubts instantly, or even request study tips. It's like having a <strong>24/7 personal tutor</strong>!
+                </div>
+            </div>
+
+        
+            <div class="faq-item bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-xl">
+                <div class="faq-question p-8 md:p-10 flex items-center justify-between hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50">
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-800 flex-1 pr-4">
+                        💰 Is StudyMate AI free?
+                    </h3>
+                    <div class="faq-icon w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="faq-answer px-8 md:px-10 text-lg text-gray-600 leading-relaxed">
+                    <strong>Yes! Completely free</strong> with unlimited usage. No subscriptions, no hidden fees. 
+                    Study smarter without spending a dime. Premium features coming soon!
+                </div>
+            </div>
+        </div>
+
+     
+        <div class="text-center mt-24">
+            <a href="/index.html" class="back-btn px-16 py-8 text-2xl font-black rounded-3xl shadow-2xl">
+                <button>🚀 Start Studying Now</button>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            document.querySelectorAll('.faq-question').forEach(function(question) {
+                question.addEventListener('click', function() {
+                    const faqItem = this.parentElement;
+                    const isActive = faqItem.classList.contains('active');
+                    
+                  
+                    document.querySelectorAll('.faq-item').forEach(function(item) {
+                        item.classList.remove('active');
+                    });
+                    
+                 
+                    if (!isActive) {
+                        faqItem.classList.add('active');
+                    }
+                });
+            });
+
+        
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.faq-item')) {
+                    document.querySelectorAll('.faq-item').forEach(function(item) {
+                        item.classList.remove('active');
+                    });
+                }
+            });
+        });
+
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.faq-item').forEach(function(item) {
+                    item.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

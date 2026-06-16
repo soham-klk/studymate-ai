@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards - StudyMate AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'flip-in': 'flipIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'float-gentle': 'floatGentle 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        flipIn: {
+                            '0%': { transform: 'rotateY(90deg) scale(0.8)', opacity: 0 },
+                            '50%': { transform: 'rotateY(10deg)', opacity: 0.8 },
+                            '100%': { transform: 'rotateY(0deg) scale(1)', opacity: 1 }
+                        },
+                        floatGentle: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dark-glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(31, 41, 55, 0.75);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        
+        .flashcard-container {
+            perspective: 1200px;
+        }
+        .flashcard {
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+         #bn{
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 min-h-screen transition-all duration-500">
+    <button id="bn" onclick="window.location.href='index.html'">Back</button>
+    
+    <header class="glass dark:dark-glass sticky top-0 z-50 border-b border-white/20 dark:border-gray-700/50 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg animate-float-gentle">
+                    <span class="text-white font-bold text-xl"><img src="/flash.jpg" alt="flashcard"></span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold gradient-text">Interactive Flashcards</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">StudyMate AI</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="px-4 py-2 bg-white/30 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl text-sm font-medium" id="cardCounter">0/0</span>
+                <button onclick="shuffleCards()" 
+                        class="px-4 py-2 bg-white/30 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl font-medium hover:bg-white/50 transition-all">
+                    🔀 Shuffle
+                </button>
+                <button onclick="toggleDarkMode()" 
+                        class="p-2 rounded-2xl hover:bg-white/30 dark:hover:bg-gray-800/50 transition-all">
+                    <svg id="themeIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+       
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-5xl md:text-6xl font-black gradient-text mb-6 leading-tight">
+                Flip & Learn
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Transform notes into <strong class="text-emerald-600 font-semibold">interactive flashcards</strong> 
+                with smooth 3D flip animations.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+         
+            <div class="fade-in-up animation-delay-200">
+                <div class="bg-white/70 dark:bg-gray-800/70 glass dark:dark-glass rounded-3xl p-8 lg:p-12 border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center space-x-3">
+                        📝 Create Flashcards From Notes
+                    </h3>
+                    <textarea id="notesInput" rows="12" 
+                              class="w-full p-6 text-lg rounded-2xl border-2 border-gray-200/50 dark:border-gray-600/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 resize-vertical bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm transition-all duration-300 font-medium placeholder-gray-500"
+                              placeholder="Paste your notes to generate flashcards automatically...
+
+Example:
+Photosynthesis: Process where plants convert sunlight, CO2, and water into glucose and oxygen.
+Chlorophyll: Green pigment that captures light energy.
+Light reactions: Occur in thylakoid membranes, produce ATP and NADPH.
+Calvin cycle: Uses ATP/NADPH to fix CO2 into sugars.
+"></textarea>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+                        <button onclick="generateFlashcards()" 
+                                class="flex-1 px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center space-x-3 group">
+                            <span id="generateBtnText">✨ Generate Flashcards</span>
+                            <span id="generateSpinner" class="hidden animate-spin">⚡</span>
+                        </button>
+                        <button onclick="clearData()" 
+class="px-8 py-4 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold text-lg rounded-2xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center space-x-2">
+🗑️ Clear Previous Data
+</button>
+                    </div>
+                </div>
+            </div>
+
+           
+            <div class="fade-in-up animation-delay-400 lg:sticky lg:top-32 lg:h-screen lg:overflow-y-auto">
+                <div class="space-y-6">
+                  
+                    <div id="flashcardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                  
+                    </div>
+                    
+                   
+                    <div id="singleCardMode" class="min-h-[500px] flex items-center justify-center">
+                        <div class="text-center text-gray-500 dark:text-gray-400 space-y-6">
+                            <div class="w-28 h-28 bg-emerald-200/50 dark:bg-emerald-900/50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse">
+                                🃏
+                            </div>
+                            <div>
+                                <h3 class="text-3xl font-bold mb-4">Ready to Study</h3>
+                                <p class="text-xl max-w-md mx-auto">Generate flashcards from your notes above</p>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <div id="studyProgress" class="bg-white/70 dark:bg-gray-800/70 glass dark:dark-glass rounded-3xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-xl hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="font-bold text-xl gradient-text">Study Progress</span>
+                            <span class="font-bold text-lg" id="cardsReviewed">0</span>
+                        </div>
+                        <div class="w-full bg-gray-200/50 dark:bg-gray-700/50 rounded-full h-3 overflow-hidden mb-2">
+                            <div id="progressBar" class="bg-gradient-to-r from-emerald-500 to-teal-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
+                            <span>Mastered</span>
+                            <span id="masteryPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+let flashcards = [];
+let cardsReviewed = 0;
+let flippedCards = new Set();
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    updateThemeIcon();
+    loadSampleNotes();
+});
+
+
+function toggleDarkMode() {
+    document.documentElement.classList.toggle("dark");
+    updateThemeIcon();
+}
+
+function updateThemeIcon() {
+    const icon = document.getElementById("themeIcon");
+
+    if (document.documentElement.classList.contains("dark")) {
+        icon.innerHTML = "☀️";
+    } else {
+        icon.innerHTML = "🌙";
+    }
+}
+
+function clearData() {
+
+    document.getElementById("notesInput").value = "";
+
+    flashcards = [];
+    cardsReviewed = 0;
+    flippedCards.clear();
+
+    document.getElementById("flashcardsGrid").innerHTML = "";
+    document.getElementById("flashcardsGrid").classList.add("hidden");
+
+    document.getElementById("singleCardMode").classList.remove("hidden");
+
+    document.getElementById("cardCounter").innerText = "0/0";
+
+    document.getElementById("progressBar").style.width = "0%";
+    document.getElementById("cardsReviewed").innerText = "0";
+    document.getElementById("masteryPercent").innerText = "0%";
+
+    document.getElementById("studyProgress").classList.add("hidden");
+}
+
+function generateFlashcards() {
+
+    const notes = document.getElementById("notesInput").value.trim();
+
+    if (!notes) {
+        alert("Please enter notes first.");
+        return;
+    }
+
+    const lines = notes.split("\n").filter(line => line.includes(":"));
+
+    flashcards = lines.map(line => {
+        const parts = line.split(":");
+        return {
+            question: parts[0].trim(),
+            answer: parts.slice(1).join(":").trim()
+        };
+    });
+
+    cardsReviewed = 0;
+    flippedCards.clear();
+
+    displayFlashcards();
+}
+
+
+function displayFlashcards() {
+
+    const grid = document.getElementById("flashcardsGrid");
+    const single = document.getElementById("singleCardMode");
+
+    grid.innerHTML = "";
+
+    grid.classList.remove("hidden");
+    single.classList.add("hidden");
+
+    flashcards.forEach((card, index) => {
+
+        const cardHTML = `
+        <div class="flashcard-container h-64">
+            <div class="flashcard relative w-full h-full cursor-pointer"
+                 onclick="flipCard(this)">
+
+                <div class="flashcard-front bg-white dark:bg-gray-800
+                            flex items-center justify-center p-6 shadow-xl">
+
+                    <h3 class="text-xl font-bold text-center">
+                        ${card.question}
+                    </h3>
+
+                </div>
+
+                <div class="flashcard-back bg-emerald-500 text-white
+                            flex items-center justify-center p-6 shadow-xl">
+
+                    <p class="text-lg text-center">
+                        ${card.answer}
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+        `;
+
+        grid.innerHTML += cardHTML;
+
+    });
+
+    updateCounter();
+
+    document.getElementById("studyProgress").classList.remove("hidden");
+}
+
+
+function flipCard(card) {
+
+    card.classList.toggle("flipped");
+
+    if (!flippedCards.has(card)) {
+        flippedCards.add(card);
+        cardsReviewed++;
+        updateProgress();
+    }
+}
+
+
+function shuffleCards() {
+
+    if (flashcards.length === 0) return;
+
+    flashcards.sort(() => Math.random() - 0.5);
+
+    displayFlashcards();
+}
+
+
+function updateCounter() {
+
+    const counter = document.getElementById("cardCounter");
+
+    counter.innerText = `0 / ${flashcards.length}`;
+}
+
+
+function updateProgress() {
+
+    if (flashcards.length === 0) return;
+
+    const percent = Math.round((cardsReviewed / flashcards.length) * 100);
+
+    document.getElementById("cardsReviewed").innerText =
+        cardsReviewed + " / " + flashcards.length;
+
+    document.getElementById("progressBar").style.width =
+        percent + "%";
+
+    document.getElementById("masteryPercent").innerText =
+        percent + "%";
+}
+
+
+function loadSampleNotes() {
+
+    const sampleNotes = `Photosynthesis: Plants convert sunlight into chemical energy.
+Chlorophyll: Green pigment that captures light energy.
+Light Reactions: Occur in thylakoid membranes and produce ATP and NADPH.
+Calvin Cycle: Uses ATP and NADPH to convert CO2 into glucose.
+Cellular Respiration: Process where cells convert glucose into ATP energy.`;
+
+    document.getElementById("notesInput").value = sampleNotes;
+}
+
+function saveSummaryData() {
+    const summaryData = {
+        title: "Summary Generated", 
+        type: "summary",
+        duration: "15m", 
+        mastery: "85%", 
+        timestamp: new Date().toLocaleString(),
+        icon: "📝"
+    };
+    saveStudySession(summaryData);
+}
+
+
+function saveQuizData(score) {
+    const quizData = {
+        title: "Quiz Completed",
+        type: "quiz",
+        duration: "28m",
+        mastery: score + "%",
+        timestamp: new Date().toLocaleString(),
+        icon: "🧠"
+    };
+    saveStudySession(quizData);
+}
+
+
+function saveFlashcardData(retention) {
+    const flashcardData = {
+        title: "Flashcards Reviewed",
+        type: "flashcards",
+        duration: "45m",
+        mastery: retention + "%",
+        timestamp: new Date().toLocaleString(),
+        icon: "🃏"
+    };
+    saveStudySession(flashcardData);
+}
+
+
+function saveStudySession(data) {
+    let sessions = JSON.parse(localStorage.getItem('studySessions') || '[]');
+    sessions.unshift(data); 
+    if (sessions.length > 10) sessions = sessions.slice(0, 10); 
+    localStorage.setItem('studySessions', JSON.stringify(sessions));
+    
+  
+    updateStudyStats();
+}
+
+
+function updateStudyStats() {
+    let sessions = JSON.parse(localStorage.getItem('studySessions') || '[]');
+    const totalTime = sessions.reduce((sum, s) => sum + parseInt(s.duration), 0);
+    const avgMastery = sessions.reduce((sum, s) => sum + parseInt(s.mastery), 0) / sessions.length;
+    
+    localStorage.setItem('totalStudyTime', totalTime);
+    localStorage.setItem('avgMastery', Math.round(avgMastery));
+}
+</script>

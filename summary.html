@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Summaries - StudyMate AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dark-glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(31, 41, 55, 0.75);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+         #bn{
+            background: linear-gradient(45deg, #6827ff, #25bad4);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 min-h-screen transition-all duration-500">
+    <button id="bn" onclick="window.location.href='index.html'">Back</button>
+    
+    <header class="glass dark:dark-glass sticky top-0 z-50 border-b border-white/20 dark:border-gray-700/50 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                    <span class="text-white font-bold text-lg"><img src="/sum.webp" alt="summary">
+                    </span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold gradient-text">Smart Summaries</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">StudyMate AI</p>
+                </div>
+            </div>
+            <button onclick="toggleDarkMode()" 
+                    class="p-2 rounded-2xl hover:bg-white/30 dark:hover:bg-gray-800/50 transition-all duration-200">
+                <svg id="themeIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-5xl md:text-6xl font-black gradient-text mb-6 leading-tight">
+                Smart Summaries
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Paste your notes and get <strong class="text-indigo-600 font-semibold">instant key points</strong> 
+                with intelligent summarization.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="scrollToInput()" 
+                        class="px-10 py-5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-xl rounded-3xl shadow-2xl hover:shadow-3xl hover:scale-[1.02] transition-all duration-300 transform">
+                    🚀 Generate Summary Now
+                </button>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+           
+            <div class="fade-in-up animation-delay-200">
+                <div class="bg-white/70 dark:bg-gray-800/70 glass dark:dark-glass rounded-3xl p-8 lg:p-12 border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+                        📝 Your Notes
+                    </h3>
+                    <textarea id="notesInput" rows="12" 
+                              class="w-full p-6 text-lg rounded-2xl border-2 border-gray-200/50 dark:border-gray-600/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 resize-vertical bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm transition-all duration-300 font-medium placeholder-gray-500"
+                              placeholder="Paste your lecture notes, textbook content, or any study material here...
+
+Example:
+Photosynthesis is the process used by plants to convert light energy into chemical energy. It occurs in chloroplasts and has two main stages: light-dependent reactions and the Calvin cycle. Light-dependent reactions produce ATP and NADPH, while the Calvin cycle uses these to make glucose..."></textarea>
+                    
+                    <div class="flex flex-wrap gap-4 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+                        <button onclick="generateSummary()" 
+                                class="flex-1 sm:flex-none px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center space-x-3 group">
+                            <span class="group-hover:hidden">✨ Generate Summary</span>
+                            <span class="hidden group-hover:block animate-pulse">🎯 Creating...</span>
+                        </button>
+                        <button onclick="clearAll()" 
+                                class="px-8 py-4 bg-gray-200/70 dark:bg-gray-700/70 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold text-lg rounded-2xl hover:scale-[1.02] transition-all duration-300">
+                            🗑️ Clear All
+                        </button>
+                    </div>
+
+                    
+                    <div class="mt-6 pt-6 border-t border-gray-200/30 dark:border-gray-700/30">
+                        <button onclick="loadSampleNotes()" 
+                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium flex items-center space-x-2 text-sm hover:scale-105 transition-all">
+                            <span>📚</span>
+                            <span>Load Sample Biology Notes</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="fade-in-up animation-delay-400">
+                <div id="summarySection" class="bg-gradient-to-br from-indigo-50/80 to-purple-50/80 dark:from-gray-800/70 dark:to-indigo-900/70 glass dark:dark-glass rounded-3xl p-8 lg:p-12 border border-indigo-200/50 dark:border-indigo-800/50 shadow-2xl min-h-[500px] flex flex-col">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold gradient-text flex items-center space-x-3">
+                            <span>📋</span>
+                            <span>AI Summary</span>
+                        </h3>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span id="summaryLength">0 key points</span>
+                        </div>
+                    </div>
+                    
+                    <div id="summaryContent" class="flex-1 flex items-center justify-center text-center">
+                        <div class="text-gray-500 dark:text-gray-400 space-y-4">
+                            <div class="w-24 h-24 bg-indigo-200/50 dark:bg-indigo-900/50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse">
+                                ✨
+                            </div>
+                            <h4 class="text-2xl font-bold mb-2">Ready to Summarize</h4>
+                            <p class="max-w-md mx-auto text-lg">Paste your notes above and click "Generate Summary" to get instant key points</p>
+                        </div>
+                    </div>
+
+                    
+                    <div id="summaryStats" class="mt-8 pt-8 border-t border-gray-200/30 dark:border-gray-700/30 hidden grid grid-cols-3 gap-4 text-sm">
+                        <div class="text-center p-4 rounded-2xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+                            <div class="text-2xl font-bold gradient-text" id="keyPointsCount">0</div>
+                            <div class="text-gray-600 dark:text-gray-400">Key Points</div>
+                        </div>
+                        <div class="text-center p-4 rounded-2xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+                            <div class="text-2xl font-bold text-emerald-600" id="reductionPercent">0%</div>
+                            <div class="text-gray-600 dark:text-gray-400">Reduced</div>
+                        </div>
+                        <div class="text-center p-4 rounded-2xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+                            <div class="text-2xl font-bold text-purple-600" id="readTime">0 min</div>
+                            <div class="text-gray-600 dark:text-gray-400">Read Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+        <div class="mt-32 fade-in-up">
+            <div class="text-center mb-20">
+                <h3 class="text-4xl font-bold text-gray-800 dark:text-white mb-6">Why Choose Smart Summaries?</h3>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">AI-powered extraction of the most important information from your study materials</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center p-8 rounded-3xl bg-white/60 dark:bg-gray-800/60 glass dark:dark-glass hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group">
+                    <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/50 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                        ⚡
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 group-hover:text-emerald-600 transition-colors">Lightning Fast</h4>
+                    <p class="text-gray-600 dark:text-gray-300">Get summaries in seconds, not hours</p>
+                </div>
+                <div class="text-center p-8 rounded-3xl bg-white/60 dark:bg-gray-800/60 glass dark:dark-glass hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group">
+                    <div class="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/50 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                        🎯
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 group-hover:text-indigo-600 transition-colors">Key Points Only</h4>
+                    <p class="text-gray-600 dark:text-gray-300">Extracts only the most important information</p>
+                </div>
+                <div class="text-center p-8 rounded-3xl bg-white/60 dark:bg-gray-800/60 glass dark:dark-glass hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group">
+                    <div class="w-20 h-20 bg-purple-100 dark:bg-purple-900/50 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                        📱
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 group-hover:text-purple-600 transition-colors">Perfect for Review</h4>
+                    <p class="text-gray-600 dark:text-gray-300">Ideal for quick revision before exams</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <footer class="mt-32 border-t border-gray-200/50 dark:border-gray-700/50 pt-12 pb-8 text-center">
+        <p class="text-gray-600 dark:text-gray-400">&copy; 2024 StudyMate AI. Made with ❤️ for students everywhere.</p>
+    </footer>
+
+    <script>
+
+        let isDarkMode = false;
+        let originalTextLength = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateThemeIcon();
+            loadSampleNotes(); 
+        });
+
+       
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.documentElement.classList.toggle('dark', isDarkMode);
+            updateThemeIcon();
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function updateThemeIcon() {
+            const icon = document.getElementById('themeIcon');
+            if (isDarkMode) {
+                icon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>';
+            } else {
+                icon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>';
+            }
+        }
+
+        
+        function loadSampleNotes() {
+            const sampleNotes = `Photosynthesis is the process by which green plants, algae, and some bacteria use sunlight, water, and carbon dioxide to produce oxygen and energy in the form of sugar. This process occurs in the chloroplasts of plant cells, specifically in the thylakoid membranes during light-dependent reactions and in the stroma during the Calvin cycle.
+
+Key factors affecting photosynthesis include light intensity, CO2 concentration, temperature, and water availability. The light-dependent reactions capture photons and split water molecules, producing ATP, NADPH, and oxygen. The Calvin cycle then uses these energy carriers to fix CO2 into glucose.
+
+Chlorophyll, the primary pigment, absorbs red and blue light while reflecting green. C3, C4, and CAM plants have different adaptations to optimize photosynthesis under varying environmental conditions. Photosynthesis is fundamental to nearly all life on Earth as it forms the base of most food chains.`;
+            
+            document.getElementById('notesInput').value = sampleNotes;
+            originalTextLength = sampleNotes.length;
+        }
+
+        function scrollToInput() {
+            document.getElementById('notesInput').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('notesInput').focus();
+        }
+
+             
+        function clearAll() {
+            document.getElementById('notesInput').value = '';
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="text-gray-500 dark:text-gray-400 space-y-4">
+                    <div class="w-24 h-24 bg-indigo-200/50 dark:bg-indigo-900/50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse">
+                        ✨
+                    </div>
+                    <h4 class="text-2xl font-bold mb-2">Ready to Summarize</h4>
+                    <p class="max-w-md mx-auto text-lg">Paste your notes above and click "Generate Summary" to get instant key points</p>
+                </div>
+            `;
+            document.getElementById('summaryStats').classList.add('hidden');
+            originalTextLength = 0;
+        }
+
+     
+        function generateSummary() {
+            const notes = document.getElementById('notesInput').value.trim();
+            
+            if (!notes) {
+                alert('Please paste some notes first! 📝');
+                scrollToInput();
+                return;
+            }
+
+     
+            const summaryContent = document.getElementById('summaryContent');
+            const generateBtn = document.querySelector('button[onclick="generateSummary()"]');
+            
+            generateBtn.innerHTML = '<span class="animate-spin">⏳</span><span>Generating...</span>';
+            generateBtn.disabled = true;
+            
+          
+            setTimeout(() => {
+                const summary = createSmartSummary(notes);
+                displaySummary(summary);
+                generateBtn.innerHTML = '<span>✨</span><span>Generate Summary</span>';
+                generateBtn.disabled = false;
+            }, 1200);
+        }
+
+        
+        function createSmartSummary(text) {
+           
+            const sentences = text
+                .replace(/\s+/g, ' ')
+                .split(/[.!?]+/)
+                .map(s => s.trim())
+                .filter(s => s.length > 20);
+
+            originalTextLength = text.length;
+
+        
+            const keySentences = [];
+            
+          
+            const importantWords = ['important', 'key', 'main', 'primary', 'essential', 'crucial', 'fundamental', 'definition', 'process', 'function', 'role'];
+            const keywordSentences = sentences.filter(sentence => 
+                importantWords.some(word => sentence.toLowerCase().includes(word))
+            );
+            keySentences.push(...keywordSentences.slice(0, 2));
+
+            
+            const sortedByLength = sentences.sort((a, b) => b.length - a.length);
+            keySentences.push(...sortedByLength.slice(0, 3).filter(s => !keySentences.includes(s)));
+
+          
+            const factSentences = sentences.filter(sentence => /\d+/.test(sentence));
+            keySentences.push(...factSentences.slice(0, 2).filter(s => !keySentences.includes(s)));
+
+            return keySentences.slice(0, 8).map((sentence, index) => ({
+                id: index,
+                text: sentence.length > 120 ? sentence.substring(0, 120) + '...' : sentence,
+                fullText: sentence,
+                isBullet: true
+            }));
+        }
+
+       
+        function displaySummary(keyPoints) {
+            const summaryContent = document.getElementById('summaryContent');
+            const summaryStats = document.getElementById('summaryStats');
+            
+           
+            const summaryLength = keyPoints.reduce((total, point) => total + point.text.length, 0);
+            const reduction = Math.round(((originalTextLength - summaryLength) / originalTextLength) * 100);
+            const readTime = Math.ceil(summaryLength / 200);
+
+           
+            document.getElementById('keyPointsCount').textContent = keyPoints.length;
+            document.getElementById('reductionPercent').textContent = reduction + '%';
+            document.getElementById('readTime').textContent = readTime + ' min';
+            document.getElementById('summaryLength').textContent = keyPoints.length + ' key points';
+
+           
+            let html = `
+                <div class="space-y-4">
+                    ${keyPoints.map(point => `
+                        <div class="group bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/50">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-white text-sm mt-0.5">
+                                    ${point.id + 1}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-lg font-medium text-gray-800 dark:text-white leading-relaxed group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">${point.text}</p>
+                                    ${point.fullText.length > 120 ? `
+                                        <details class="mt-3">
+                                            <summary class="text-sm text-indigo-600 dark:text-indigo-400 font-medium cursor-pointer hover:underline">Read full point</summary>
+                                            <p class="mt-2 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">${point.fullText}</p>
+                                        </details>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            summaryContent.innerHTML = html;
+            summaryStats.classList.remove('hidden');
+        }
+
+       
+        function copySummary() {
+            const summaryText = Array.from(document.querySelectorAll('#summaryContent p'))
+                .map(p => p.textContent)
+                .join('\n\n');
+            
+            navigator.clipboard.writeText(summaryText).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+       
+        function printSummary() {
+            window.print();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        generateSummary();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        copySummary();
+                        break;
+                }
+            }
+        });
+
+        document.getElementById('notesInput').addEventListener('input', function() {
+            localStorage.setItem('studyNotes', this.value);
+        });
+
+        window.addEventListener('load', function() {
+            const saved = localStorage.getItem('studyNotes');
+            if (saved) {
+                document.getElementById('notesInput').value = saved;
+            }
+        });
+
+      
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        console.log('🎉 StudyMate AI Smart Summaries loaded successfully!');
+        console.log('💡 Pro Tip: Ctrl+Enter to generate summary quickly');
+        
+function saveSummaryData() {
+    const summaryData = {
+        title: "Summary Generated", 
+        type: "summary",
+        duration: "15m", 
+        mastery: "85%", 
+        timestamp: new Date().toLocaleString(),
+        icon: "📝"
+    };
+    saveStudySession(summaryData);
+}
+
+
+function saveQuizData(score) {
+    const quizData = {
+        title: "Quiz Completed",
+        type: "quiz",
+        duration: "28m",
+        mastery: score + "%",
+        timestamp: new Date().toLocaleString(),
+        icon: "🧠"
+    };
+    saveStudySession(quizData);
+}
+
+
+function saveFlashcardData(retention) {
+    const flashcardData = {
+        title: "Flashcards Reviewed",
+        type: "flashcards",
+        duration: "45m",
+        mastery: retention + "%",
+        timestamp: new Date().toLocaleString(),
+        icon: "🃏"
+    };
+    saveStudySession(flashcardData);
+}
+
+
+function saveStudySession(data) {
+    let sessions = JSON.parse(localStorage.getItem('studySessions') || '[]');
+    sessions.unshift(data);
+    if (sessions.length > 10) sessions = sessions.slice(0, 10); 
+    localStorage.setItem('studySessions', JSON.stringify(sessions));
+    
+   
+    updateStudyStats();
+}
+
+
+function updateStudyStats() {
+    let sessions = JSON.parse(localStorage.getItem('studySessions') || '[]');
+    const totalTime = sessions.reduce((sum, s) => sum + parseInt(s.duration), 0);
+    const avgMastery = sessions.reduce((sum, s) => sum + parseInt(s.mastery), 0) / sessions.length;
+    
+    localStorage.setItem('totalStudyTime', totalTime);
+    localStorage.setItem('avgMastery', Math.round(avgMastery));
+}
+    </script>
+</body>
+</html>

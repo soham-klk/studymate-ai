@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMate AI - Tutor Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+             align-items: center;
+            justify-content: center; 
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9ff;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.ai .message-content {
+            background: white;
+            border: 2px solid #e1e8ff;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .message.ai .message-content::before {
+            content: '🤖';
+            position: absolute;
+            left: -15px;
+            top: 10px;
+            font-size: 18px;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ff;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #messageInput:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        #sendBtn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #sendBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        #sendBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            margin: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+                border-radius: 15px;
+            }
+            .message-content {
+                max-width: 85%;
+            }
+        }
+        #bn{
+            background: linear-gradient(45deg, #1dfcde, #056070);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+            position: absolute;
+    top: 20px;
+    left: 20px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <button id="bn" onclick="window.location.href='index.html'">Back</button>
+ 
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>📚 StudyMate AI Tutor</h1>
+            <p>Ask me anything about your studies! I'm here to help 24/7</p>
+        </div>
+        
+        <div class="messages-container" id="messagesContainer">
+            <div class="welcome-message">
+                👋 Hi! I'm your personal AI tutor. Ask me about math, science, history, coding, or any subject you're studying. What would you like to learn today?
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            StudyMate is typing <span></span><span></span><span></span>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="messageInput" placeholder="Ask your question here..." maxlength="500">
+                <button id="sendBtn">
+                    <span>Send</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+ <script>
+class StudyMateChat {
+    constructor() {
+        this.messagesContainer = document.getElementById('messagesContainer');
+        this.messageInput = document.getElementById('messageInput');
+        this.sendBtn = document.getElementById('sendBtn');
+        this.typingIndicator = document.getElementById('typingIndicator');
+        this.init();
+    }
+
+    init() {
+       
+        this.sendBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.sendMessage();
+        });
+        
+        this.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMessage();
+            }
+        });
+        
+       
+        this.messageInput.focus();
+    }
+
+    async sendMessage() {
+        const message = this.messageInput.value.trim();
+        if (!message) return;
+
+        
+        this.addMessage(message, 'user');
+        this.messageInput.value = '';
+        this.sendBtn.disabled = true;
+        this.sendBtn.textContent = 'Sending...';
+        this.showTypingIndicator();
+
+        try {
+            const aiResponse = await this.getAIResponse(message);
+            this.hideTypingIndicator();
+            this.addMessage(aiResponse, 'ai');
+        } catch (error) {
+            console.error('Error:', error);
+            this.hideTypingIndicator();
+            this.addMessage("Sorry, I'm having trouble connecting right now. Please try again! 😅", 'ai');
+        } finally {
+            this.sendBtn.disabled = false;
+            this.sendBtn.innerHTML = `
+                <span>Send</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            `;
+            this.messageInput.focus();
+        }
+    }
+
+    addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.innerHTML = text;
+        
+        messageDiv.appendChild(messageContent);
+        this.messagesContainer.appendChild(messageDiv);
+        this.scrollToBottom();
+        
+        
+        const welcomeMsg = this.messagesContainer.querySelector('.welcome-message');
+        if (welcomeMsg) welcomeMsg.remove();
+    }
+
+    showTypingIndicator() {
+        this.typingIndicator.style.display = 'block';
+        this.scrollToBottom();
+    }
+
+    hideTypingIndicator() {
+        this.typingIndicator.style.display = 'none';
+    }
+
+    scrollToBottom() {
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+    }
+
+    async getAIResponse(message) {
+    
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+        
+        const q = message.toLowerCase().trim();
+        
+        
+        const mathMatch = q.match(/(\d+(?:\.\d+)?)\s*([\+\-\*×÷\/])\s*(\d+(?:\.\d+)?)/i);
+        if (mathMatch) {
+            const a = parseFloat(mathMatch[1]);
+            const op = mathMatch[2];
+            const b = parseFloat(mathMatch[3]);
+            
+            let result;
+            switch(op) {
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '*': case '×': result = a * b; break;
+                case '/': case '÷': result = b !== 0 ? a / b : 'undefined'; break;
+            }
+            
+            return `**Math Solved!** 🧮<br><br>
+            <strong>${a} ${op} ${b}</strong> = <span style="color: #4facfe; font-size: 1.4em; font-weight: bold;">${result}</span><br><br>
+            <strong>Practice:</strong> ${Math.floor(Math.random()*20)+1} × ${Math.floor(Math.random()*12)+1} = ?`;
+        }
+        
+        
+        if (q.includes('addition') || q.includes('+')) {
+            return `**Mathematics: Addition** 🧮<br><br>
+            <strong>Rule:</strong> Sum of numbers<br>
+            <strong>Example:</strong> 7 + 3 = <strong>10</strong><br><br>
+            <strong>Practice:</strong> Try: 15 + 27 = ?`;
+        }
+        
+        if (q.includes('subtraction') || q.includes('-')) {
+            return `**Mathematics: Subtraction** ➖<br><br>
+            <strong>Rule:</strong> Take away<br>
+            <strong>Example:</strong> 20 - 8 = <strong>12</strong><br><br>
+            <strong>Practice:</strong> 50 - 17 = ?`;
+        }
+        
+        if (q.includes('multiply') || q.includes('×') || q.includes('*')) {
+            return `**Mathematics: Multiplication** ✖️<br><br>
+            <strong>Rule:</strong> Repeated addition<br>
+            <strong>Example:</strong> 4 × 3 = 12 (4+4+4)<br><br>
+            <strong>Practice:</strong> 6 × 7 = ?`;
+        }
+        
+        if (q.includes('divide') || q.includes('÷') || q.includes('/')) {
+            return `**Mathematics: Division** ➗<br><br>
+            <strong>Rule:</strong> Sharing equally<br>
+            <strong>Example:</strong> 20 ÷ 4 = <strong>5</strong><br><br>
+            <strong>Practice:</strong> 36 ÷ 6 = ?`;
+        }
+        
+        if (q.includes('photosynthesis') || q.includes('plant')) {
+            return `**Photosynthesis** 🌿<br><br>
+            <strong>Equation:</strong> CO₂ + H₂O + ☀️ → Glucose + O₂<br>
+            <strong>Where:</strong> Chloroplasts (green parts)<br>
+            <strong>Quiz:</strong> What gas do plants release? <strong>O₂ (Oxygen)</strong>`;
+        }
+        
+        if (q.includes('study') || q.includes('exam') || q.includes('learn')) {
+            return `**Study Mastery** 🎯<br><br>
+            <strong>Top Techniques:</strong><br>
+            1. **Pomodoro:** 25min study + 5min break<br>
+            2. **Active Recall:** Test yourself<br>
+            3. **Spaced Repetition:** Review over time<br>
+            4. **Sleep:** 8hrs = 2x memory<br><br>
+            <strong>Start:</strong> Pick 1 method today!`;
+        }
+        
+   
+        return `**${message.charAt(0).toUpperCase() + message.slice(1)}** 🎓<br><br>
+        <strong>Learning Steps:</strong><br>
+        1. **Understand** the basics<br>
+        2. **Practice** with examples<br>
+        3. **Apply** in real problems<br><br>
+        
+        💡 <strong>Ask specifically:</strong> "Explain [topic]" or "Solve [math problem]"<br>
+        <em>Try: "5 + 7" or "What is photosynthesis?"</em>`;
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.chat = new StudyMateChat();
+    });
+} else {
+    window.chat = new StudyMateChat();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance - StudyMate AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #fff, #076585);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate3d(0,0,0)' },
+                            '50%': { transform: 'translate3d(0,-20px,0)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: translateY(30px); },
+                            '100%': { opacity: 1, transform: translateY(0); }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0; },
+                            '100%': { opacity: 1; }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #bf5ae0, #a811da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        #logo {
+            height: 280px;
+            width: 280px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        }
+        .stream-card {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .stream-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+        .stream-card.selected {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 40px 80px rgba(79, 70, 229, 0.3);
+            border-color: #4f46e5;
+        }
+        .career-grid {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .career-grid.show {
+            opacity: 1;
+            max-height: 2000px;
+            animation: slide-up 0.6s ease-out;
+        }
+        .career-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .career-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+         #bn{
+            background: linear-gradient(45deg, #31fff5, #4b12b4);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+            
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.5);
+        }
+        .page-enter { animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        .back-btn {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45);
+        }
+    </style>
+</head>
+<body class="page-enter">
+    <button id="bn" onclick="window.location.href='index.html'">Back</button>
+   
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+     
+        <section class="text-center mb-24 page-enter">
+            <div class="inline-block animate-float mb-12 mx-auto">
+                <img src="/logo.jpeg" alt="StudyMate AI Logo" id="logo">
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black gradient-text mb-6 leading-tight tracking-tight drop-shadow-2xl">
+                Career Guidance
+            </h1>
+            <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-8">
+                Find Your Perfect Path
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed opacity-90">
+                Select your stream and discover amazing career opportunities tailored just for you! 🚀
+            </p>
+        </section>
+
+       
+        <div class="max-w-5xl mx-auto mb-20">
+            <h3 class="text-3xl md:text-4xl font-black text-gray-800 text-center mb-16">
+                🎓 Choose Your Stream
+            </h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+              
+                <div class="stream-card bg-white/80 backdrop-blur-xl rounded-3xl p-10 border-4 border-transparent hover:border-indigo-300 group cursor-pointer" onclick="selectStream('arts')">
+                    <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/arts.webp" alt="arts">
+                    </div>
+                    <h4 class="text-2xl font-black text-gray-800 text-center mb-4 group-hover:text-purple-600 transition-colors">Arts</h4>
+                    <p class="text-lg text-gray-600 text-center">Creative & Humanities</p>
+                </div>
+
+                <div class="stream-card bg-white/80 backdrop-blur-xl rounded-3xl p-10 border-4 border-transparent hover:border-emerald-300 group cursor-pointer" onclick="selectStream('commerce')">
+                    <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/comm.webp" alt="commerce">
+                    </div>
+                    <h4 class="text-2xl font-black text-gray-800 text-center mb-4 group-hover:text-emerald-600 transition-colors">Commerce</h4>
+                    <p class="text-lg text-gray-600 text-center">Business & Finance</p>
+                </div>
+
+     
+                <div class="stream-card bg-white/80 backdrop-blur-xl rounded-3xl p-10 border-4 border-transparent hover:border-blue-300 group cursor-pointer" onclick="selectStream('science')">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/science.webp" alt="science">
+                    </div>
+                    <h4 class="text-2xl font-black text-gray-800 text-center mb-4 group-hover:text-blue-600 transition-colors">Science</h4>
+                    <p class="text-lg text-gray-600 text-center">Engineering & Medicine</p>
+                </div>
+
+          
+                <div class="stream-card bg-white/80 backdrop-blur-xl rounded-3xl p-10 border-4 border-transparent hover:border-orange-300 group cursor-pointer" onclick="selectStream('diploma')">
+                    <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/diploma.webp" alt="diploma">
+                    </div>
+                    <h4 class="text-2xl font-black text-gray-800 text-center mb-4 group-hover:text-orange-600 transition-colors">Diploma</h4>
+                    <p class="text-lg text-gray-600 text-center">Vocational Training</p>
+                </div>
+
+                <div class="stream-card bg-white/80 backdrop-blur-xl rounded-3xl p-10 border-4 border-transparent hover:border-rose-300 group cursor-pointer" onclick="selectStream('other')">
+                    <div class="w-20 h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-xl group-hover:scale-110 transition-all duration-300">
+                        <img src="/other.webp" alt="othher">
+                    </div>
+                    <h4 class="text-2xl font-black text-gray-800 text-center mb-4 group-hover:text-rose-600 transition-colors">Other</h4>
+                    <p class="text-lg text-gray-600 text-center">All Streams</p>
+                </div>
+            </div>
+        </div>
+
+       
+        <div id="careerList" class="career-grid bg-white/90 backdrop-blur-xl rounded-3xl p-12 md:p-20 border border-gray-200/50 shadow-2xl mx-auto max-w-6xl hidden">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-16">
+                <div>
+                    <h3 id="streamTitle" class="text-4xl md:text-5xl font-black text-gray-800 mb-4"></h3>
+                    <p id="streamDesc" class="text-2xl text-gray-600"></p>
+                </div>
+                <button onclick="resetForm()" class="btn-primary mt-6 lg:mt-0">
+                    🔄 Change Stream
+                </button>
+            </div>
+            
+            <div id="careersGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+               
+            </div>
+        </div>
+    </main>
+
+<script>
+   
+const careerData = {
+    arts: {
+        title: "🎨 Arts Stream Careers",
+        desc: "Creative careers perfect for your artistic talents and humanities passion",
+        careers: [
+            { name: "Graphic Designer", icon: "🎨", desc: "Create stunning visuals for brands", salary: "₹4-12 LPA" },
+            { name: "Journalist", icon: "📰", desc: "Tell powerful stories to the world", salary: "₹3-10 LPA" },
+            { name: "Lawyer", icon: "⚖️", desc: "Advocate justice and fight for rights", salary: "₹5-20 LPA" },
+            { name: "Fashion Designer", icon: "👗", desc: "Design trendy clothes and accessories", salary: "₹4-15 LPA" },
+            { name: "Content Writer", icon: "✍️", desc: "Craft engaging stories and articles", salary: "₹3-8 LPA" },
+            { name: "Psychologist", icon: "🧠", desc: "Help people with mental wellbeing", salary: "₹4-12 LPA" }
+        ]
+    },
+    commerce: {
+        title: "💰 Commerce Stream Careers",
+        desc: "Business and finance careers for your entrepreneurial spirit",
+        careers: [
+            { name: "Chartered Accountant", icon: "📊", desc: "Manage finances and audits", salary: "₹7-25 LPA" },
+            { name: "Investment Banker", icon: "💼", desc: "Handle big money deals", salary: "₹10-50 LPA" },
+            { name: "Digital Marketer", icon: "📈", desc: "Grow brands online", salary: "₹5-15 LPA" },
+            { name: "Financial Analyst", icon: "💹", desc: "Analyze markets and investments", salary: "₹6-18 LPA" },
+            { name: "Business Analyst", icon: "📋", desc: "Solve business problems", salary: "₹8-20 LPA" },
+            { name: "Entrepreneur", icon: "🚀", desc: "Start your own company", salary: "Unlimited!" }
+        ]
+    },
+    science: {
+        title: "🔬 Science Stream Careers",
+        desc: "Technical careers in engineering, medicine, and research",
+        careers: [
+            { name: "Software Engineer", icon: "💻", desc: "Build apps and websites", salary: "₹6-25 LPA" },
+            { name: "Doctor (MBBS)", icon: "🏥", desc: "Save lives and treat patients", salary: "₹10-40 LPA" },
+            { name: "Data Scientist", icon: "📊", desc: "Unlock insights from data", salary: "₹8-30 LPA" },
+            { name: "AI/ML Engineer", icon: "🤖", desc: "Create intelligent systems", salary: "₹10-35 LPA" },
+            { name: "Civil Engineer", icon: "🏗️", desc: "Build infrastructure", salary: "₹5-15 LPA" },
+            { name: "Biotechnologist", icon: "🧬", desc: "Innovate in biology", salary: "₹6-18 LPA" }
+        ]
+    },
+    diploma: {
+        title: "📚 Diploma Careers",
+        desc: "Practical, job-ready careers with quick training",
+        careers: [
+            { name: "Mechanical Technician", icon: "🔧", desc: "Maintain machinery", salary: "₹3-8 LPA" },
+            { name: "Web Developer", icon: "🌐", desc: "Build websites quickly", salary: "₹4-10 LPA" },
+            { name: "Electrician", icon: "⚡", desc: "Electrical installations", salary: "₹3-7 LPA" },
+            { name: "Interior Designer", icon: "🏠", desc: "Design beautiful spaces", salary: "₹4-9 LPA" },
+            { name: "Automobile Mechanic", icon: "🚗", desc: "Repair vehicles", salary: "₹3-6 LPA" },
+            { name: "Medical Lab Technician", icon: "🧪", desc: "Lab testing & analysis", salary: "₹3-7 LPA" }
+        ]
+    },
+    other: {
+        title: "🌟 All Streams Careers",
+        desc: "Amazing careers open to everyone with passion and skills",
+        careers: [
+            { name: "Digital Creator", icon: "📱", desc: "YouTube, Instagram, TikTok", salary: "₹2-50 LPA" },
+            { name: "Cybersecurity Expert", icon: "🛡️", desc: "Protect digital world", salary: "₹8-25 LPA" },
+            { name: "UX/UI Designer", icon: "🎨", desc: "Design user experiences", salary: "₹6-18 LPA" },
+            { name: "Blockchain Developer", icon: "🔗", desc: "Build crypto systems", salary: "₹10-30 LPA" },
+            { name: "Sports Management", icon: "⚽", desc: "Manage sports events", salary: "₹5-15 LPA" },
+            { name: "Event Planner", icon: "🎉", desc: "Organize amazing events", salary: "₹4-12 LPA" }
+        ]
+    }
+};
+
+let selectedStream = null;
+
+function selectStream(stream, clickedCard) {
+    console.log('Stream clicked:', stream); 
+    
+
+    document.querySelectorAll('.stream-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    clickedCard.classList.add('selected');
+    selectedStream = stream;
+
+    localStorage.setItem('preferredStream', stream);
+
+    const data = careerData[stream];
+    
+ 
+    document.getElementById('streamTitle').textContent = data.title;
+    document.getElementById('streamDesc').textContent = data.desc;
+
+
+    const careersGrid = document.getElementById('careersGrid');
+    careersGrid.innerHTML = '';
+
+  
+    data.careers.forEach((career, index) => {
+        const careerCard = document.createElement('div');
+        careerCard.className = `career-card bg-gradient-to-br from-white/90 to-gray-50 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 hover:shadow-2xl transition-all duration-300 group cursor-pointer hover:bg-white/100 opacity-0 animate-fadeIn`;
+        careerCard.style.animationDelay = `${index * 0.1}s`;
+        careerCard.innerHTML = `
+            <div class="flex items-start space-x-4 mb-4">
+                <div class="text-4xl flex-shrink-0">${career.icon}</div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-2xl font-black text-gray-800 group-hover:text-indigo-600 transition-colors mb-2">${career.name}</h4>
+                    <p class="text-lg text-gray-600 leading-relaxed">${career.desc}</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                <span class="text-2xl font-bold text-emerald-600">${career.salary}</span>
+                <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-all duration-300">
+                    ⭐
+                </div>
+            </div>
+        `;
+        careersGrid.appendChild(careerCard);
+    });
+
+   
+    const careerList = document.getElementById('careerList');
+    careerList.classList.remove('hidden');
+    setTimeout(() => {
+        careerList.classList.add('show');
+        scrollToCareers();
+    }, 100);
+}
+
+function resetForm() {
+   
+    const careerList = document.getElementById('careerList');
+    careerList.classList.remove('show');
+    setTimeout(() => {
+        careerList.classList.add('hidden');
+    }, 600);
+
+    document.querySelectorAll('.stream-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    selectedStream = null;
+}
+
+function scrollToCareers() {
+    document.getElementById('careerList').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('.stream-card').forEach(card => {
+       
+        const streamName = card.querySelector('h4').textContent.toLowerCase();
+        let streamKey;
+        
+        if (streamName.includes('arts')) streamKey = 'arts';
+        else if (streamName.includes('commerce')) streamKey = 'commerce';
+        else if (streamName.includes('science')) streamKey = 'science';
+        else if (streamName.includes('diploma')) streamKey = 'diploma';
+        else if (streamName.includes('other')) streamKey = 'other';
+
+        card.addEventListener('click', function(e) {
+            console.log('Card clicked:', streamKey); 
+            selectStream(streamKey, this);
+        });
+
+        card.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: radial-gradient(circle, rgba(79,70,229,0.4) 0%, transparent 70%);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+});
+
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .career-grid.show .career-card {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+`;
+document.head.appendChild(style);
+
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        resetForm();
+    }
+});
+
+
+window.addEventListener('load', function() {
+    const savedStream = localStorage.getItem('preferredStream');
+    if (savedStream) {
+        setTimeout(() => {
+            const savedCard = Array.from(document.querySelectorAll('.stream-card')).find(card => 
+                card.querySelector('h4').textContent.toLowerCase().includes(savedStream)
+            );
+            if (savedCard) {
+                savedCard.click();
+            }
+        }, 1000);
+    }
+});
+</script>

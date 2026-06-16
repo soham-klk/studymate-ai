@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Generator - StudyMate AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-gentle': 'bounce 2s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dark-glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(31, 41, 55, 0.75);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+        .progress-fill {
+            transition: width 0.5s ease-in-out;
+        }
+         #bn{
+            background: linear-gradient(45deg, #a619f7, #f81ac1);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 min-h-screen transition-all duration-500">
+    <button id="bn" onclick="window.location.href='index.html'">Back</button>
+   
+    <header class="glass dark:dark-glass sticky top-0 z-50 border-b border-white/20 dark:border-gray-700/50 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold text-xl"><img src="/quiz.webp" alt="quiz"></span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold gradient-text">Quiz Generator</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">StudyMate AI</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="resetQuiz()" 
+                        class="px-6 py-2 bg-white/30 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl font-medium hover:bg-white/50 dark:hover:bg-gray-700/50 transition-all">
+                    🔄 New Quiz
+                </button>
+                <button onclick="toggleDarkMode()" 
+                        class="p-2 rounded-2xl hover:bg-white/30 dark:hover:bg-gray-800/50 transition-all">
+                    <svg id="themeIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      
+        <div class="text-center mb-20 fade-in-up">
+            <h2 class="text-5xl md:text-6xl font-black gradient-text mb-6 leading-tight">
+                Practice Quiz Generator
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Turn your notes into <strong class="text-purple-600 font-semibold">interactive quizzes</strong> 
+                with automatic scoring and progress tracking.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+            
+            <div class="fade-in-up animation-delay-200">
+                <div class="bg-white/70 dark:bg-gray-800/70 glass dark:dark-glass rounded-3xl p-8 lg:p-12 border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center space-x-3">
+                        📝 Your Study Notes
+                    </h3>
+                    <textarea id="notesInput" rows="10" 
+                              class="w-full p-6 text-lg rounded-2xl border-2 border-gray-200/50 dark:border-gray-600/50 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 resize-vertical bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm transition-all duration-300 font-medium placeholder-gray-500"
+                              placeholder="Paste your notes here to generate quiz questions..."></textarea>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+                        <button onclick="generateQuiz()" 
+                                class="flex-1 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center space-x-3 group">
+                            <span id="generateBtnText">🎯 Generate Quiz</span>
+                            <span id="generateSpinner" class="hidden animate-spin">⏳</span>
+                        </button>
+                        <button onclick="loadSampleNotes()" 
+                                class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-lg rounded-2xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center space-x-2">
+                            📚 Sample Notes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fade-in-up animation-delay-400">
+                <div class="bg-white/70 dark:bg-gray-800/70 glass dark:dark-glass rounded-3xl p-8 lg:p-12 border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
+                   
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-xl text-gray-800 dark:text-white" id="questionCounter">Q1</span>
+                            <span class="font-bold text-lg text-gray-600 dark:text-gray-400" id="scoreDisplay">0/0 (0%)</span>
+                        </div>
+                        <div class="w-full bg-gray-200/50 dark:bg-gray-700/50 rounded-full h-4 overflow-hidden">
+                            <div id="progressBar" class="progress-fill bg-gradient-to-r from-purple-500 to-pink-600 h-4 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                   
+                    <div id="quizContainer" class="min-h-[400px] flex flex-col justify-center items-center text-center">
+                        <div class="w-24 h-24 bg-purple-200/50 dark:bg-purple-900/50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse">
+                            🧠
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-4">Ready for Quiz</h3>
+                        <p class="text-lg max-w-md mx-auto">Generate a quiz from your notes above to start practicing!</p>
+                    </div>
+
+
+                    <div id="resultsScreen" class="hidden min-h-[400px] flex flex-col items-center justify-center text-center p-12">
+                        <div class="w-32 h-32 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                            <span id="finalScoreIcon" class="text-4xl">🎉</span>
+                        </div>
+                        <h2 class="text-4xl font-black gradient-text mb-4" id="finalScoreTitle">Perfect!</h2>
+                        <p class="text-6xl font-black mb-8" id="finalScore">100%</p>
+                        <div class="grid grid-cols-3 gap-6 mb-12 max-w-md mx-auto">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-emerald-600 mb-1" id="correctCount">10</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">Correct</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gray-500 mb-1" id="totalCount">10</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">Total</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-orange-600 mb-1" id="wrongCount">0</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">Wrong</div>
+                            </div>
+                        </div>
+                        <button onclick="generateQuiz()" 
+                                class="px-12 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold text-xl rounded-3xl shadow-2xl hover:shadow-3xl hover:scale-[1.02] transition-all mb-4">
+                            🔄 New Quiz
+                        </button>
+                        <button onclick="showAnswers()" 
+                                class="px-12 py-4 border-3 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 font-bold text-xl rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-[1.02] transition-all">
+                            📝 Show Answers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+       
+        let currentQuiz = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let quizScore = 0;
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateThemeIcon();
+            loadSampleNotes();
+        });
+
+        
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            updateThemeIcon();
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        function updateThemeIcon() {
+            const icon = document.getElementById('themeIcon');
+            if (document.documentElement.classList.contains('dark')) {
+                icon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>';
+            } else {
+                icon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>';
+            }
+        }
+
+    
+        function loadSampleNotes() {
+            const sample = `The water cycle, also known as the hydrologic cycle, describes the continuous movement of water on, above, and below Earth's surface. It involves several key processes:
+
+1. Evaporation: Water changes from liquid to gas due to heat from the sun
+2. Condensation: Water vapor cools and forms clouds
+3. Precipitation: Water falls as rain, snow, sleet, or hail
+4. Collection: Water accumulates in oceans, lakes, and rivers
+5. Infiltration: Water seeps into the ground
+6. Runoff: Water flows over land into bodies of water
+
+The ocean is the largest reservoir of water and drives most evaporation.`;
+            document.getElementById('notesInput').value = sample;
+        }
+
+        
+        function generateQuiz() {
+            const notes = document.getElementById('notesInput').value.trim();
+            if (!notes) {
+                alert('Please add some notes first! 📝');
+                return;
+            }
+
+            const btnText = document.getElementById('generateBtnText');
+            const spinner = document.getElementById('generateSpinner');
+            
+            btnText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+
+            setTimeout(() => {
+                currentQuiz = createQuizQuestions(notes);
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                quizScore = 0;
+                
+                btnText.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                
+                showCurrentQuestion();
+            }, 1500);
+        }
+
+        
+        function createQuizQuestions(text) {
+            const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 15);
+            const questions = [];
+
+            sentences.slice(0, 8).forEach((sentence, index) => {
+                const question = {
+                    id: index,
+                    question: generateQuestion(sentence),
+                    options: generateOptions(sentence),
+                    correct: 0,
+                    userSelected: null
+                };
+                questions.push(question);
+            });
+
+            return questions;
+        }
+
+        function generateQuestion(sentence) {
+            const starters = [
+                `What is the main idea of: "${sentence.substring(0, 60)}..."?`,
+                `According to the text, what does "${extractKeyTerm(sentence)}" refer to?`,
+                `Which statement best summarizes: "${sentence.substring(0, 50)}..."?`
+            ];
+            return starters[Math.floor(Math.random() * starters.length)];
+        }
+
+        function extractKeyTerm(sentence) {
+            const words = sentence.split(' ');
+            return words[Math.floor(words.length / 2)] || 'this process';
+        }
+
+        function generateOptions(correctSentence) {
+            const correct = correctSentence.substring(0, 60) + (correctSentence.length > 60 ? '...' : '');
+            const wrong1 = correct.replace('process', 'method').replace('water', 'liquid');
+            const wrong2 = 'This is not mentioned in the text';
+            const wrong3 = correct.split(' ')[0] + ' occurs differently';
+            
+            return [correct, wrong1, wrong2, wrong3];
+        }
+
+        
+        function showCurrentQuestion() {
+            if (currentQuestionIndex >= currentQuiz.length) {
+                showResults();
+                return;
+            }
+
+            const question = currentQuiz[currentQuestionIndex];
+            const container = document.getElementById('quizContainer');
+            
+            container.innerHTML = `
+                <div class="space-y-6 w-full max-w-2xl">
+                    <div class="text-center">
+                        <div class="text-3xl font-black gradient-text mb-4">${question.question}</div>
+                    </div>
+                    <div class="space-y-3">
+                        ${question.options.map((option, optIndex) => `
+                            <button onclick="selectAnswer(${question.id}, ${optIndex})" 
+                                    class="w-full p-6 text-left rounded-2xl border-2 border-gray-200/50 dark:border-gray-600/50 hover:border-purple-400 hover:shadow-lg hover:scale-[1.01] transition-all duration-200 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm font-medium ${question.userSelected === optIndex ? 'ring-4 ring-purple-500/30 scale-105 shadow-lg border-purple-400' : ''}">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                                       <div class="flex justify-between pt-6 border-t border-gray-200/30 dark:border-gray-700/30">
+                        ${currentQuestionIndex > 0 ? `
+                            <button onclick="previousQuestion()" 
+                                    class="px-6 py-3 text-gray-600 dark:text-gray-400 font-medium hover:text-gray-900 dark:hover:text-white transition-colors">
+                                ← Previous
+                            </button>
+                        ` : ''}
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            Question ${currentQuestionIndex + 1} of ${currentQuiz.length}
+                        </div>
+                        <button onclick="nextQuestion()" 
+                                class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-105 transition-all">
+                            ${currentQuestionIndex === currentQuiz.length - 1 ? 'Finish Quiz' : 'Next →'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            updateProgress();
+        }
+
+        
+        function selectAnswer(questionId, optionIndex) {
+            const question = currentQuiz.find(q => q.id === questionId);
+            question.userSelected = optionIndex;
+            userAnswers[questionId] = optionIndex;
+            
+            if (optionIndex === question.correct) {
+                quizScore++;
+            }
+            
+            setTimeout(() => {
+                if (currentQuestionIndex < currentQuiz.length - 1) {
+                    nextQuestion();
+                } else {
+                    showResults();
+                }
+            }, 800);
+        }
+
+        
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showCurrentQuestion();
+        }
+
+        function previousQuestion() {
+            currentQuestionIndex--;
+            showCurrentQuestion();
+        }
+
+        
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / currentQuiz.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            const answered = Object.keys(userAnswers).length;
+            const scorePercent = currentQuiz.length > 0 ? Math.round((quizScore / currentQuiz.length) * 100) : 0;
+            
+            document.getElementById('questionCounter').textContent = `Q${currentQuestionIndex + 1}`;
+            document.getElementById('scoreDisplay').textContent = `${quizScore}/${currentQuiz.length} (${scorePercent}%)`;
+        }
+
+    
+        function showResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const scorePercent = Math.round((quizScore / currentQuiz.length) * 100);
+            const icon = scorePercent >= 80 ? '🎉' : scorePercent >= 60 ? '👍' : '📚';
+            const title = scorePercent >= 80 ? 'Outstanding!' : scorePercent >= 60 ? 'Great Job!' : 'Keep Practicing!';
+            
+            document.getElementById('finalScoreIcon').textContent = icon;
+            document.getElementById('finalScoreTitle').textContent = title;
+            document.getElementById('finalScore').textContent = scorePercent + '%';
+            document.getElementById('correctCount').textContent = quizScore;
+            document.getElementById('totalCount').textContent = currentQuiz.length;
+            document.getElementById('wrongCount').textContent = currentQuiz.length - quizScore;
+        }
+
+       
+        function resetQuiz() {
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('resultsScreen').classList.add('hidden');
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            quizScore = 0;
+            document.getElementById('quizContainer').innerHTML = `
+                <div class="min-h-[400px] flex flex-col items-center justify-center text-center">
+                    <div class="w-24 h-24 bg-purple-200/50 dark:bg-purple-900/50 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse">
+                        🔄
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-4">Quiz Reset</h3>
+                    <p class="text-lg max-w-md mx-auto">Ready for a new quiz! Generate from notes above.</p>
+                </div>
+            `;
+            updateProgress();
+        }
+
+      
+        function showAnswers() {
+            let html = '<div class="space-y-4 mt-8">';
+            currentQuiz.forEach((q, index) => {
+                const isCorrect = q.userSelected === q.correct;
+                html += `
+                    <div class="p-6 rounded-2xl border-2 ${isCorrect ? 'border-emerald-300 bg-emerald-50/50' : 'border-orange-300 bg-orange-50/50'} dark:bg-opacity-30">
+                        <div class="font-bold text-lg mb-2">Q${index + 1}: ${q.question}</div>
+                        <div class="ml-6 space-y-1 text-sm">
+                            <div class="font-semibold text-emerald-700 dark:text-emerald-400">✅ Correct: ${q.options[q.correct]}</div>
+                            ${q.userSelected !== null ? `
+                                <div class="${isCorrect ? 'text-emerald-600' : 'text-orange-600'}">
+                                    ${isCorrect ? '✅ Your answer: Correct!' : `❌ Your answer: ${q.options[q.userSelected]}`}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            document.getElementById('resultsScreen').innerHTML += html;
+        }
+
+       
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'Enter') {
+                    generateQuiz();
+                }
+            }
+        });
+
+        
+        document.getElementById('notesInput').addEventListener('input', function() {
+            localStorage.setItem('quizNotes', this.value);
+        });
+
+        
+        window.addEventListener('load', function() {
+            const saved = localStorage.getItem('quizNotes');
+            if (saved) {
+                document.getElementById('notesInput').value = saved;
+            }
+        });
+
+        console.log('🎯 Quiz Generator loaded successfully!');
+        console.log('💡 Pro Tip: Ctrl+Enter to generate quiz instantly');
+        
+function saveSummaryData() {
+    const summaryData = {
+        title: "Summary Generated", 
+        type: "summary",
+        duration: "15m", 
+        mastery: "85%", 
+        timestamp: new Date().toLocaleString(),
+        icon: "📝"
+    };
+    saveStudySession(summaryData);
+}
+
+
+function saveQuizData(score) {
+    const quizData = {
+        title: "Quiz Completed",
+        type: "quiz",
+        duration: "28m",
+        mastery: score + "%",
+        timestamp: new Date().toLocaleString(),
+        icon: "🧠"
+    };
+    saveStudySession(quizData);
+}
+
+
+function saveFlashcardData(retention) {
+    const flashcardData = {
+        title: "Flashcards Reviewed",
+        type: "flashcards",
+        duration: "45m",
+        mastery: retention + "%",
+        timestamp: new Date().toLocaleString(),
+        icon: "🃏"
+    };
+    saveStudySession(flashcardData);
+}
+
+
+function saveStudySession(data) {
+    let sessions = JSON.parse(localStorage.getItem('studySessions') || '[]');
+    sessions.unshift(data); 
+    if (sessions.length > 10) sessions = sessions.slice(0, 10); 
+    localStorage.setItem('studySessions', JSON.stringify(sessions));
+    
+    
+    updateStudyStats();
+}
+
+
+function updateStudyStats() {
+    let sessions = JSON.parse(localStorage.getItem('studySessions') || '[]');
+    const totalTime = sessions.reduce((sum, s) => sum + parseInt(s.duration), 0);
+    const avgMastery = sessions.reduce((sum, s) => sum + parseInt(s.mastery), 0) / sessions.length;
+    
+    localStorage.setItem('totalStudyTime', totalTime);
+    localStorage.setItem('avgMastery', Math.round(avgMastery));
+}
+    </script>
+</body>
+</html>

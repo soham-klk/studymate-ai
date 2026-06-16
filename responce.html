@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - StudyMate AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #fff, #076585);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'success-pop': 'successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate3d(0,0,0)' },
+                            '50%': { transform: 'translate3d(0,-20px,0)' },
+                        },
+                        successPop: {
+                            '0%': { 
+                                transform: scale(0.7) translateY(20px);
+                                opacity: 0;
+                            },
+                            '60%': { 
+                                transform: scale(1.05);
+                                opacity: 1;
+                            },
+                            '100%': { 
+                                transform: scale(1) translateY(0);
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #bf5ae0, #a811da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        #logo {
+            height: 280px;
+            width: 280px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        }
+        .form-input {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.5);
+        }
+        .submit-btn:active {
+            transform: translateY(-2px);
+        }
+        .success-message {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            transform: scale(0);
+            opacity: 0;
+        }
+        .success-message.show {
+            animation: success-pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        .page-enter { animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        .back-btn {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45);
+        }
+         #bn{
+            background: linear-gradient(45deg, #31fff5, #4b12b4);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+            margin-left: 50px;
+                }
+        #bn:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: scale(1.05);
+            
+        }
+    </style>
+</head>
+<body class="page-enter">
+    
+<button id="bn" onclick="window.location.href='index.html'">Back</button>
+    
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+       
+        <section class="text-center mb-24 page-enter">
+            <div class="inline-block animate-float mb-12 mx-auto">
+                <img src="/logo.jpeg" alt="StudyMate AI Logo" id="logo">
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black gradient-text mb-6 leading-tight tracking-tight drop-shadow-2xl">
+                Contact Us
+            </h1>
+            <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-8">
+                We'd love to hear from you!
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto leading-relaxed opacity-90 mb-16">
+                Share your feedback, suggestions, or just say hello. 
+                Your input helps us make StudyMate AI even better! ✨
+            </p>
+        </section>
+
+      
+        <div class="max-w-2xl mx-auto">
+           
+            <div id="successMessage" class="success-message hidden rounded-3xl p-12 text-center shadow-2xl mx-auto mb-12 max-w-2xl text-white font-semibold text-2xl">
+                ✅ Your response is sent!
+                <p class="text-lg mt-4 opacity-90">Thank you for your feedback. We'll get back to you soon! 🚀</p>
+            </div>
+
+           
+            <form id="contactForm" class="bg-white/80 backdrop-blur-xl rounded-3xl p-12 md:p-16 border border-gray-200/50 shadow-2xl space-y-8">
+               
+                <div>
+                    <label class="block text-xl font-semibold text-gray-800 mb-4">👤 Your Name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        required 
+                        placeholder="Enter your name"
+                        class="form-input w-full p-6 text-xl rounded-2xl focus:ring-4"
+                    >
+                </div>
+
+                
+                <div>
+                    <label class="block text-xl font-semibold text-gray-800 mb-4">📧 Your Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        required 
+                        placeholder="your.email@example.com"
+                        class="form-input w-full p-6 text-xl rounded-2xl focus:ring-4"
+                    >
+                </div>
+
+                
+                <div>
+                    <label class="block text-xl font-semibold text-gray-800 mb-4">💬 Your Feedback</label>
+                    <textarea 
+                        id="feedback" 
+                        required 
+                        rows="6"
+                        placeholder="Tell us what you love about StudyMate AI, what could be better, or any suggestions..."
+                        class="form-input w-full p-6 text-xl rounded-2xl resize-vertical focus:ring-4"
+                    ></textarea>
+                </div>
+
+                
+                <div class="pt-8">
+                    <button 
+                        type="submit" 
+                        class="submit-btn w-full lg:w-auto text-2xl font-black tracking-wide uppercase"
+                    >
+                        Send Feedback 🚀
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contactForm');
+            const successMessage = document.getElementById('successMessage');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+               
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const feedback = document.getElementById('feedback').value;
+
+             
+                if (!name || !email || !feedback) {
+                    alert('Please fill in all fields!');
+                    return;
+                }
+
+                
+                setTimeout(() => {
+                    
+                    form.style.display = 'none';
+                  
+                    successMessage.classList.remove('hidden');
+                    successMessage.classList.add('show');
+                    
+                    
+                    successMessage.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+
+                  
+                    form.reset();
+                }, 800);
+            });
+
+            
+            successMessage.addEventListener('click', function() {
+                form.style.display = 'block';
+                successMessage.classList.add('hidden');
+                successMessage.classList.remove('show');
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
